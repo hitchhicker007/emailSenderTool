@@ -1,59 +1,43 @@
 import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
 
-print("""
-     _   _ _ _       _       _   _ _      _
-    | | | (_) |_ ___| |__   | | | (_) ___| | _____ _ __
-    | |_| | | __/ __| '_ \  | |_| | |/ __| |/ / _ \ '__|
-    |  _  | | || (__| | | | |  _  | | (__|   <  __/ |
-    |_| |_|_|\__\___|_| |_| |_| |_|_|\___|_|\_\___|_|   """)
+gmail_user = ""   
+gmail_pass = ""   
 
-print("""
-  ===================Emails Sender Python tool===================""")
+email_file = open('emails.txt','r')
 
-print("""   Author : Parth Panchal""")
+emails = []
+for i in email_file:
+    emails.append(i.strip())
 
-print("""  =============================================================""")
+sent_from = gmail_user
+
+subject = "Python webinar by ASME SOU"
+
+body = "Hey there, my name is parth panchal. sending you this email using python programming on webinar session 4."
 
 
-from_add = 'Paste Your email address here...'            #paste your email address here
-mails = open('emails.txt','r')
+email_text = """
+From: %s
+To:%s
+Subject: %s
 
-print("\n\tPlease Wait...")
-j = 1
-for i in mails:
-    to_add = str(i)
+%s
+""" % (sent_from, emails,subject, body)
 
-    msg = MIMEMultipart()
-    msg['from'] = from_add
-    msg['to'] = to_add
-    msg['subject'] = 'testing'
+smtp_server = smtplib.SMTP_SSL('smtp.gmail.com',465)
 
-    body = "hello this is for test..."
+smtp_server.ehlo()
 
-    msg.attach(MIMEText(body,'plain'))
+smtp_server.login(gmail_user,gmail_pass)
 
-    email = str("paste your email address here")                   #paste your email address here
-    password = str("paste your email address password here")        #paste your email's password here
+for index,email in enumerate(emails):
+    if index > 189:
+        try:
+            smtp_server.sendmail(sent_from, email, email_text)
+            print("email ",index, " sent...")
+        except Exception as e:
+            print("error while sending email number ",index, " ",str(e))
 
-    try :
-        #remove below line if you are using yahoo mail
-        server = smtplib.SMTP("smtp.gmail.com", 587)
+print("----all emails are sent----")
 
-        #remove below line if you are using gmail
-        server = smtplib.SMTP("smtp.mail.yahoo.com",587)
-
-        server.ehlo()
-        server.starttls()
-        server.login(email,password)
-        text = msg.as_string()
-        server.sendmail(from_add, to_add, text)
-        server.quit()
-        print("\n\tEmail ",j," sent...")
-        j = j+1
-    except :
-        print('\n\tEmail ',j,' is not send...')
-        j = j+1
-
-print("\n\tAll the mails sent successfully...")
+smtp_server.close()
