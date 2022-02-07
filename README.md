@@ -21,5 +21,3 @@ cd emailSenderTool
 pip install smtplib
 python script.py
 ```
-
-### DON'T COPY THIS CODE WITHOUT GIVE ME THE CREDITS!!
